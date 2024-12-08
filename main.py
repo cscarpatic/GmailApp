@@ -22,8 +22,8 @@ SCOPES = [
 ]
 
 # Percorsi di configurazione
-TOKEN_FILE = os.getenv("TOKEN_FILE", "/var/www/ai/GmailApp/token.json")
-ATTACHMENT_DIR = os.getenv("ATTACHMENT_DIR", "/var/www/ai/GmailApp/tmp")  # Default to /tmp/
+TOKEN_FILE = os.getenv("TOKEN_FILE", "/Users/carloscarpati/AI_Projects/GmailApp/token.json")
+ATTACHMENT_DIR = os.getenv("ATTACHMENT_DIR", "/Users/carloscarpati/AI_Projects/GmailApp/tmp")  # Default to /tmp/
 GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS")
 
 @app.get("/")
