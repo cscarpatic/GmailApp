@@ -22,8 +22,8 @@ SCOPES = [
 ]
 
 # Percorsi di configurazione
-TOKEN_FILE = os.getenv("TOKEN_FILE", "/Users/carloscarpati/AI_Projects/GmailApp/token.json")
-ATTACHMENT_DIR = os.getenv("ATTACHMENT_DIR", "/Users/carloscarpati/AI_Projects/GmailApp/tmp")  # Default to /tmp/
+TOKEN_FILE = os.getenv("TOKEN_FILE", "/var/www/ai/GmailApp/token.json")
+ATTACHMENT_DIR = os.getenv("ATTACHMENT_DIR", "/var/www/ai/GmailApp/tmp")  # Default to /tmp/
 GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS")
 
 @app.get("/")
@@ -35,24 +35,35 @@ async def authenticate():
     # Controlla che GOOGLE_CREDENTIALS sia impostato
     if not GOOGLE_CREDENTIALS:
         raise HTTPException(status_code=500, detail="Credenziali mancanti. Definisci GOOGLE_CREDENTIALS in .env.")
+    
+    print("GOOGLE_CREDENTIALS trovate")
 
     # Salva le credenziali in un file temporaneo
     temp_credentials_file = "temp_credentials.json"
     with open(temp_credentials_file, "w") as f:
         f.write(GOOGLE_CREDENTIALS)
+    
+    print("File temporaneo credenziali salvato")
 
     # Inizializza il flusso OAuth
     flow = Flow.from_client_secrets_file(temp_credentials_file, scopes=SCOPES)
-    flow.redirect_uri = "http://localhost:8000/oauth2callback"
+    flow.redirect_uri = "https://cscarpa-vps.eu:8000/oauth2callback"
+
+    print(f"Redirect URI configurato: {flow.redirect_uri}")
 
     # Ottieni l'URL di autorizzazione
-    auth_url, _ = flow.authorization_url(prompt="consent", include_granted_scopes="true")
-
-    # Rimuovi il file temporaneo
-    os.remove(temp_credentials_file)
+    try:
+        auth_url, _ = flow.authorization_url(prompt="consent", include_granted_scopes="true")
+        print(f"Auth URL generato: {auth_url}")
+    except Exception as e:
+        print(f"Errore durante la generazione dell'Auth URL: {e}")
+        raise HTTPException(status_code=500, detail="Errore durante la generazione dell'URL di autorizzazione")
+    finally:
+        # Rimuovi il file temporaneo
+        os.remove(temp_credentials_file)
+        print("File temporaneo credenziali rimosso")
 
     return RedirectResponse(auth_url)
-
 @app.get("/oauth2callback")
 async def oauth2callback(request: Request):
     try:
@@ -67,7 +78,7 @@ async def oauth2callback(request: Request):
 
         # Inizializza il flusso OAuth
         flow = Flow.from_client_secrets_file(temp_credentials_file, scopes=SCOPES)
-        flow.redirect_uri = "http://localhost:8000/oauth2callback"
+        flow.redirect_uri = "https://cscarpa-vps.eu:8000/oauth2callback"
 
         # Recupera il codice di autorizzazione dalla richiesta
         code = request.query_params.get("code")
