@@ -56,7 +56,7 @@ You can also test endpoints manually via:
 ### Environment Variables (`.env`)
 - `GOOGLE_CREDENTIALS`: JSON string containing Google OAuth2 client credentials
 - `TOKEN_FILE`: Path to OAuth token storage (default: `/var/www/ai/GoogleApp/token.json`)
-- `BASE_URL`: Application base URL (default: `https://cscarpa-vps.eu/GoogleApp`)
+- `BASE_URL`: Application base URL for internal calls (default: `http://127.0.0.1:8011`)
 - `API_KEY`: API key for securing endpoints (default: `GoogleApp_SecureKey_2025_Cscarpa_VPS_Protection`)
 
 ### Port Configuration
@@ -76,6 +76,16 @@ You can also test endpoints manually via:
 
 ### Email Operations
 - `GET /gmail/read-emails` - Filter and retrieve emails with advanced search parameters
+  - **Query Parameters:**
+    - `Label` - Filter by Gmail label (e.g. `INBOX`, `UNREAD`, `SENT`)
+    - `ExcludeLabel` - Exclude emails with this label
+    - `Subject` - Filter by word in subject
+    - `ExactSubject` - Filter by exact subject match
+    - `HasAttachment` - Filter only emails with attachments (`true`/`false`)
+    - `From` - Filter by sender email address
+    - `Text` - Filter by text content in body
+    - `max_results` - **Number of emails to return** (integer, default `10`). Use this to control how many emails are returned. Example: `max_results=2` returns only the last 2 emails, `max_results=50` returns up to 50.
+  - **Example:** `/gmail/read-emails?Label=INBOX&max_results=5` returns the last 5 inbox emails
 - `POST /gmail/write-and-send-email` - Enhanced email sending with JSON body and file path attachments
 - `POST /gmail/write-and-send-email-with-uploads` - Enhanced email sending with file uploads
 - `GET /gmail/download-attachments/{message_id}` - Download attachments and apply "Downloaded" label
