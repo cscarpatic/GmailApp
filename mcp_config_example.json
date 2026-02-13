@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "gmail-api": {
+      "command": "python",
+      "args": [
+        "/var/www/ai/GoogleApp/mcp_server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "/var/www/ai/GoogleApp/venv/lib/python3.12/site-packages"
+      }
+    }
+  }
+}
